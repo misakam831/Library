@@ -1,10 +1,12 @@
+package DataBase;
+
 import java.sql.*;
 
 /**
  * @author 胡博宇 2020/12/3
  */
 public class Getconnect {
-    public  static Connection getConnectiont(){
+    public  static java.sql.Connection getConnectiont(){
         Connection connection=null;
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -12,13 +14,15 @@ public class Getconnect {
             String username="baotou";
             String password="baotou";
             connection= DriverManager.getConnection(url,username,password);
+            System.out.println("连接成功");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            System.out.println("连接失败");
         }
         return connection;
 
     }
-    public static void main(String[] args){
+/*    public static void main(String[] args){
         //String sql="select sno,sname from student";
         String sql="select sno,sum(grade) sg from sc group by sno";
         Connection connection=getConnectiont();
@@ -27,17 +31,12 @@ public class Getconnect {
             Statement statement= connection.createStatement();
             //ResultSet resultSet=statement.executeQuery(sql);
             System.out.println("链接成功");
-            /*while(resultSet.next()){
-                String sno=resultSet.getString("sno");
-                double sg=resultSet.getDouble("sg");
-                System.out.println(sno);
-                System.out.println(sg);
 
-            }*/
 
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("链接失败");
         }
-    }
+    }*/
+
 }
