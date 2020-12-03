@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.sql.Connection;
 
 public class Frame extends JFrame {
-    public static Connection conn ;
+    public Connection conn = null;
 
     /***************************窗体***********************/
     public static void main(String[] args) {
@@ -60,8 +60,11 @@ public class Frame extends JFrame {
         button_1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Getconnect.getConnectiont();
-                JOptionPane.showMessageDialog(jPanel,"数据库连接成功","提示",JOptionPane.PLAIN_MESSAGE);
+                conn = Getconnect.getConnectiont();
+                if(conn!=null){
+                    JOptionPane.showMessageDialog(jPanel,"数据库连接成功","提示",JOptionPane.PLAIN_MESSAGE);}
+                else{JOptionPane.showMessageDialog(jPanel,"数据库连接失败","提示",JOptionPane.PLAIN_MESSAGE);}
+
 
             }
         });
