@@ -5,13 +5,18 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * @author 胡博宇
  */
 
 public class Frame extends JFrame {
-    public Connection conn = null;
+    public static Connection conn = null;
+    public static Statement stmt = null;  //数据库连接上后，对数据进行操作时的对象
+    public static ResultSet rst = null;  //查询数据返回的结果集
+
 
 
     /***************************窗体***********************/
@@ -39,7 +44,7 @@ public class Frame extends JFrame {
         String[] headers={};
         Object[][] cellData = {};
         DefaultTableModel model = new DefaultTableModel(cellData, headers);
-        JTable jTable=new JTable(model);
+        JTable jTable=new JTable();
 
         JScrollPane jScrollPane=new JScrollPane(jTable);
         add(jScrollPane);
@@ -87,6 +92,13 @@ public class Frame extends JFrame {
         button_2.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                try {
+                    String table="places";
+                    new Function1(conn,rst,table,jTable);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+
             }
         });
 
