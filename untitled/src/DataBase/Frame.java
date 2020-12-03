@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Vector;
 
 /**
  * @author 胡博宇
@@ -14,11 +15,8 @@ import java.sql.Statement;
 
 public class Frame extends JFrame {
     public static Connection conn = null;
-    public static Statement stmt = null;  //数据库连接上后，对数据进行操作时的对象
-    public static ResultSet rst = null;  //查询数据返回的结果集
-
-
-
+    JTable jTable=null;
+    JPanel jPanel = new JPanel();
     /***************************窗体***********************/
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -38,22 +36,11 @@ public class Frame extends JFrame {
         this.setTitle("空间数据查询系统");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
-
         /**********************面板**********************/
         JPanel jPanel = new JPanel();
-        String[] headers={};
-        Object[][] cellData = {};
-        DefaultTableModel model = new DefaultTableModel(cellData, headers);
-        JTable jTable=new JTable();
-
-        JScrollPane jScrollPane=new JScrollPane(jTable);
-        add(jScrollPane);
-        add(jTable);
-        jTable.setBounds(40,50,900,500);
         jPanel.setBackground(Color.white);
         this.setSize(1024, 700);
         this.setLocation(200, 200);
-        //显示
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         JButton button_1 = new JButton("连接数据库");
@@ -93,14 +80,22 @@ public class Frame extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    String table="places";
-                    new Function1(conn,rst,table,jTable);
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
+                    if (conn != null) {
+                        jTable=funtion1();
+                        JScrollPane jScrollPane=new JScrollPane(jTable);
+                        add(jScrollPane);
+                        jScrollPane.setLocation(170,70);
+                        jScrollPane.setSize(600,450);
+                    } else {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
+                    }
 
+                } catch (HeadlessException headlessException) {
+                    headlessException.printStackTrace();
+                }
             }
         });
+
 
         button_3.setBounds(250,580,100,70);
         button_3.addMouseListener(new MouseAdapter() {
@@ -132,4 +127,35 @@ public class Frame extends JFrame {
 
         this.setVisible(true);
     }
-}
+    public JTable funtion1(){
+        Vector<Object> vector = new Vector<Object>();
+        Vector data=new Vector();
+            try {if(conn!=null){
+                String sql="select * from places";
+                Statement statement = conn.createStatement();
+                ResultSet rst=statement.executeQuery(sql);
+                rst = statement.executeQuery(sql);
+                while (rst.next()) {
+                    vector.clear();
+                    vector.add(rst.getObject(1));
+                    vector.add(rst.getObject(2));
+                    vector.add(rst.getObject(3));
+                    vector.add(rst.getObject(4));
+                    vector.add(rst.getObject(5));
+                    data.add(vector.clone());
+                }
+                Vector names = new Vector();
+                names.add("OSM_ID");
+                names.add("名字");
+                names.add("类型");
+                names.add("population");
+                names.add("geometry");
+                jTable = new JTable(data, names);
+                return jTable;
+            }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return jTable;
+        }
+    }

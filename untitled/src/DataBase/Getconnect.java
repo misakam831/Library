@@ -14,10 +14,8 @@ public class Getconnect {
             String username="baotou";
             String password="baotou";
             connection= DriverManager.getConnection(url,username,password);
-            System.out.println("连接成功");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-            System.out.println("连接失败");
         }
         return connection;
 
