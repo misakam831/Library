@@ -1,13 +1,13 @@
 package DataBase;
-
-import oracle.jdbc.OracleDatabaseMetaData;
-import oracle.net.ns.Message;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+
+/**
+ * @author 胡博宇
+ */
 
 public class Frame extends JFrame {
     public Connection conn = null;
@@ -30,6 +30,7 @@ public class Frame extends JFrame {
     public Frame() {
         this.setTitle("空间数据查询系统");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //this.setLayout();
 
         /**********************面板**********************/
         JPanel jPanel = new JPanel();
@@ -54,18 +55,24 @@ public class Frame extends JFrame {
         jPanel.add(button_6);
 
         /********************按钮***********************/
-        button_1.setSize(10000,1000);
-        button_1.setPreferredSize(new Dimension(100,50));
-        button_1.setLocation(1000,1000);
+        //button_1.setSize(10000,1000);
+        //button_1.setPreferredSize(new Dimension(100,50));
+        //button_1.setLocation(1000,1000);
+        button_1.setBounds(100,100,20,20);
         button_1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                conn = Getconnect.getConnectiont();
-                if(conn!=null){
-                    JOptionPane.showMessageDialog(jPanel,"数据库连接成功","提示",JOptionPane.PLAIN_MESSAGE);}
-                else{JOptionPane.showMessageDialog(jPanel,"数据库连接失败","提示",JOptionPane.PLAIN_MESSAGE);}
+                try {
+                    conn = Getconnect.getConnectiont();
+                    if (conn != null) {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接成功", "提示", JOptionPane.PLAIN_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
+                    }
 
-
+                } catch (HeadlessException headlessException) {
+                    headlessException.printStackTrace();
+                }
             }
         });
 
@@ -113,5 +120,7 @@ public class Frame extends JFrame {
             public void mouseClicked(MouseEvent e) {
             }
         });
+
+        this.setVisible(true);
     }
 }
