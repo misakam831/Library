@@ -1,12 +1,12 @@
 package DataBase;
+import oracle.jdbc.OracleTypes;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Vector;
 
 /**
@@ -15,8 +15,10 @@ import java.util.Vector;
 
 public class Frame extends JFrame {
     public static Connection conn = null;
+    public static ResultSet rst=null;
     JTable jTable=null;
     JPanel jPanel = new JPanel();
+
     /***************************窗体***********************/
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -101,6 +103,15 @@ public class Frame extends JFrame {
         button_3.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                try {
+                    jTable=funtion2();
+                    JScrollPane jScrollPane=new JScrollPane(jTable);
+                    add(jScrollPane);
+                    jScrollPane.setLocation(170,70);
+                    jScrollPane.setSize(600,450);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
         });
 
@@ -158,4 +169,37 @@ public class Frame extends JFrame {
             }
         return jTable;
         }
+
+        public JTable funtion2()throws Exception {
+            Vector<Object> vector = new Vector<Object>();
+            Vector data=new Vector();
+            try {
+                if (conn != null) {
+                    String sql = "select t.name,t.type,sdo_nn_distance(1) distance\n" +
+                            "from points f,buildings t\n" +
+                            "where f.name='包头' and sdo_nn(t.geometry,f.geometry,\n" +
+                            "       'sdo_num_res=100 unit=m',1)='TRUE'\n" +
+                            "       and t.name is not null\n" +
+                            "order by distance asc";
+                    Statement statement = conn.createStatement();
+                    ResultSet rst = statement.executeQuery(sql);
+                    rst = statement.executeQuery(sql);
+                    while (rst.next()) {
+                        vector.clear();
+                        vector.add(rst.getObject(1));
+                        vector.add(rst.getObject(2));
+                        vector.add(rst.getObject(3));
+                        data.add(vector.clone());
+                    }
+                    Vector names = new Vector();
+                    names.add("名字");
+                    names.add("类型");
+                    names.add("距离");
+                    jTable = new JTable(data, names);
+                    return jTable;
+                }
+            } finally {
+
+            }
+        return  jTable;}
     }
