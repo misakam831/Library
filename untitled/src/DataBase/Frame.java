@@ -3,6 +3,7 @@ import oracle.jdbc.OracleTypes;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -119,6 +120,12 @@ public class Frame extends JFrame {
         button_4.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                try {
+                    jTable=funtion3();
+
+                }catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
         });
 
@@ -198,8 +205,33 @@ public class Frame extends JFrame {
                     jTable = new JTable(data, names);
                     return jTable;
                 }
-            } finally {
-
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         return  jTable;}
+    public JTable funtion3()throws Exception{
+        Vector<Object> vector = new Vector<Object>();
+        Vector data=new Vector();
+        try {
+            if (conn!=null){
+                String sql="call testpro(?,?)";
+                conn=Getconnect.getConnectiont();
+                CallableStatement stat=conn.prepareCall(sql);
+                JTextField aTextField=new JFormattedTextField();
+
+                stat.setInt(1, 538073703);
+                stat.registerOutParameter(2, OracleTypes.VARCHAR);
+                stat.execute();
+
+                String name=stat.getString(2);
+
+                JOptionPane.showMessageDialog(jPanel, name, "提示", JOptionPane.PLAIN_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return  jTable;
+    }
     }
