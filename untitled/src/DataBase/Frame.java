@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.*;
+import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -19,6 +20,7 @@ public class Frame extends JFrame {
     public static ResultSet rst=null;
     JTable jTable=null;
     JPanel jPanel = new JPanel();
+    public static Vector<String> points = new Vector<String>();/**确定当前位置
 
     /***************************窗体***********************/
     public static void main(String[] args) {
@@ -47,7 +49,7 @@ public class Frame extends JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         JButton button_1 = new JButton("连接数据库");
-        JButton button_2 = new JButton("");
+        JButton button_2 = new JButton("查询数据");
         JButton button_3 = new JButton("");
         JButton button_4 = new JButton("");
         JButton button_5 = new JButton("");
@@ -155,26 +157,120 @@ public class Frame extends JFrame {
         Vector<Object> vector = new Vector<Object>();
         Vector data=new Vector();
             try {if(conn!=null){
-                String sql="select * from places";
+                Object[] possibilities={"buildings","places","points","railways","landuse","waterways","natural","roads"};
+                String pname = (String)JOptionPane.showInputDialog(jPanel, "选择你要查询的表：","查询数据",JOptionPane.PLAIN_MESSAGE,null,possibilities,possibilities[0]);
+                String sql="select * from "+pname;
                 Statement statement = conn.createStatement();
                 ResultSet rst=statement.executeQuery(sql);
                 rst = statement.executeQuery(sql);
-                while (rst.next()) {
-                    vector.clear();
-                    vector.add(rst.getObject(1));
-                    vector.add(rst.getObject(2));
-                    vector.add(rst.getObject(3));
-                    vector.add(rst.getObject(4));
-                    vector.add(rst.getObject(5));
-                    data.add(vector.clone());
+                if (Objects.equals(pname, "buildings")|Objects.equals(pname, "natural")|
+                        Objects.equals(pname, "railways")|Objects.equals(pname, "landuse")){
+                    while (rst.next()) {
+                        vector.clear();
+                        vector.add(rst.getObject(1));
+                        vector.add(rst.getObject(2));
+                        vector.add(rst.getObject(3));
+                        vector.add(rst.getObject(4));
+                        data.add(vector.clone());
+                    }
+                    Vector names = new Vector();
+                    names.add("OSM_ID");
+                    names.add("名字");
+                    names.add("类型");
+                    names.add("geometry");
+                    jTable = new JTable(data, names);
+                    jTable.clearSelection();
                 }
-                Vector names = new Vector();
-                names.add("OSM_ID");
-                names.add("名字");
-                names.add("类型");
-                names.add("population");
-                names.add("geometry");
-                jTable = new JTable(data, names);
+
+                if (Objects.equals(pname, "roads")){
+                    jTable.invalidate();
+                    while (rst.next()) {
+                        vector.clear();
+                        vector.add(rst.getObject(1));
+                        vector.add(rst.getObject(2));
+                        vector.add(rst.getObject(3));
+                        vector.add(rst.getObject(4));
+                        vector.add(rst.getObject(5));
+                        vector.add(rst.getObject(6));
+                        vector.add(rst.getObject(7));
+                        vector.add(rst.getObject(8));
+                        data.add(vector.clone());
+                    }
+                    Vector names = new Vector();
+                    names.add("OSM_ID");
+                    names.add("名字");
+                    names.add("类型");
+                    names.add("oneway");
+                    names.add("bridge");
+                    names.add("maxspeed");
+                    names.add("geometry");
+                    jTable = new JTable(data, names);
+                    jTable.clearSelection();
+
+                }
+
+                if (Objects.equals(pname, "waterways")){
+                    while (rst.next()) {
+                        vector.clear();
+                        vector.add(rst.getObject(1));
+                        vector.add(rst.getObject(2));
+                        vector.add(rst.getObject(3));
+                        vector.add(rst.getObject(4));
+                        vector.add(rst.getObject(5));
+                        data.add(vector.clone());
+                    }
+                    Vector names = new Vector();
+                    names.add("OSM_ID");
+                    names.add("名字");
+                    names.add("类型");
+                    names.add("waterways");
+                    names.add("geometry");
+                    jTable = new JTable(data, names);
+                    jTable.clearSelection();
+                }
+
+                if (Objects.equals(pname, "places")){
+                    while (rst.next()) {
+                        vector.clear();
+                        vector.add(rst.getObject(1));
+                        vector.add(rst.getObject(2));
+                        vector.add(rst.getObject(3));
+                        vector.add(rst.getObject(4));
+                        vector.add(rst.getObject(5));
+                        data.add(vector.clone());
+                    }
+                    Vector names = new Vector();
+                    names.add("OSM_ID");
+                    names.add("名字");
+                    names.add("类型");
+                    names.add("popular");
+                    names.add("geometry");
+                    jTable = new JTable(data, names);
+                    jTable.clearSelection();
+                }
+
+                if (Objects.equals(pname, "points")){
+                    while (rst.next()) {
+                        vector.clear();
+                        vector.add(rst.getObject(1));
+                        vector.add(rst.getObject(2));
+                        vector.add(rst.getObject(3));
+                        vector.add(rst.getObject(4));
+                        vector.add(rst.getObject(5));
+                        data.add(vector.clone());
+                    }
+                    Vector names = new Vector();
+                    names.add("OSM_ID");
+                    names.add("timestamp");
+                    names.add("名字");
+                    names.add("类型");
+                    names.add("geometry");
+                    jTable = new JTable(data, names);
+                    jTable.clearSelection();
+                }
+
+
+
                 return jTable;
             }
             } catch (Exception e) {
