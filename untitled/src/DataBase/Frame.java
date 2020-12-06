@@ -49,9 +49,9 @@ public class Frame extends JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         JButton button_1 = new JButton("连接数据库");
-        JButton button_2 = new JButton("查询数据");
-        JButton button_3 = new JButton("输入编号查询地名");
-        JButton button_4 = new JButton("输入编号查询地名");
+        JButton button_2 = new JButton("");
+        JButton button_3 = new JButton("");
+        JButton button_4 = new JButton("");
         JButton button_5 = new JButton("");
         JButton button_6 = new JButton("");
         add(button_1);
@@ -326,20 +326,24 @@ public class Frame extends JFrame {
     }
 
     public void funtion3()throws Exception{
-        Vector<Object> vector = new Vector<Object>();
-        Vector data=new Vector();
         try {
             if (conn!=null){
-                String sql="call testpro(?,?)";
+                String pname = (String) JOptionPane.showInputDialog(jPanel, "输入查询的铁路", "查询铁路", JOptionPane.PLAIN_MESSAGE);
+                String sql="call roads_length(?,?,?)";
                 conn=Getconnect.getConnectiont();
                 CallableStatement stat=conn.prepareCall(sql);
-                int id= Integer.parseInt(JOptionPane.showInputDialog(jPanel,"输入查询的编号"));
-                stat.setInt(1, id);
-                stat.registerOutParameter(2, OracleTypes.VARCHAR);
+                stat.setString(1,pname);
+                //ResultSet resultSet=stat.executeQuery(sql);
+                stat.registerOutParameter(2, OracleTypes.NUMBER);
+                stat.registerOutParameter(3, OracleTypes.NUMBER);
                 stat.execute();
-                String name=stat.getString(2);
-                JOptionPane.showMessageDialog(jPanel, name, "查询结果", JOptionPane.PLAIN_MESSAGE);
+                String length=stat.getString(2);
+                String wealth=stat.getString(3);
+                JOptionPane.showMessageDialog(jPanel, length, "距离长为", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(jPanel, wealth, "距离长为", JOptionPane.PLAIN_MESSAGE);
+
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
