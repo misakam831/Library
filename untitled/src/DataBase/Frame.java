@@ -50,8 +50,8 @@ public class Frame extends JFrame {
         this.setLocationRelativeTo(null);
         JButton button_1 = new JButton("连接数据库");
         JButton button_2 = new JButton("查询数据");
-        JButton button_3 = new JButton("");
-        JButton button_4 = new JButton("");
+        JButton button_3 = new JButton("输入编号查询地名");
+        JButton button_4 = new JButton("输入编号查询地名");
         JButton button_5 = new JButton("");
         JButton button_6 = new JButton("");
         add(button_1);
@@ -102,28 +102,41 @@ public class Frame extends JFrame {
         });
 
 
-        button_3.setBounds(250,580,100,70);
+        button_3.setBounds(250,580,200,70);
         button_3.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    jTable=funtion2();
-                    JScrollPane jScrollPane=new JScrollPane(jTable);
-                    add(jScrollPane);
-                    jScrollPane.setLocation(170,70);
-                    jScrollPane.setSize(600,450);
+                    if (conn != null) {
+                        funtion2();
+                        JScrollPane jScrollPane = new JScrollPane(jTable);
+                        add(jScrollPane);
+                        jScrollPane.setLocation(170, 70);
+                        jScrollPane.setSize(600, 450);
+                    }else {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
+                    }
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
             }
         });
 
-        button_4.setBounds(370,580,100,70);
+        button_4.setBounds(470,580,200,70);
         button_4.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    jTable=funtion3();
+                    if (conn != null) {
+                       funtion3();
+                        JScrollPane jScrollPane = new JScrollPane(jTable);
+                        add(jScrollPane);
+                        jScrollPane.setLocation(170, 70);
+                        jScrollPane.setSize(600, 450);
+                    }else {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
+                    }
+
 
                 }catch (Exception exception) {
                     exception.printStackTrace();
@@ -131,12 +144,12 @@ public class Frame extends JFrame {
             }
         });
 
-        button_5.setBounds(490,580,100,70);
+        button_5.setBounds(590,580,100,70);
         button_5.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    jTable=funtion4();
+                    funtion4();
 
                 } catch (Exception exception) {
                     exception.printStackTrace();
@@ -144,7 +157,7 @@ public class Frame extends JFrame {
             }
         });
 
-        button_6.setBounds(610,580,100,70);
+        button_6.setBounds(710,580,100,70);
         button_6.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -153,18 +166,19 @@ public class Frame extends JFrame {
 
         this.setVisible(true);
     }
-    public JTable funtion1(){
+    public JTable funtion1() {
         Vector<Object> vector = new Vector<Object>();
-        Vector data=new Vector();
-            try {if(conn!=null){
-                Object[] possibilities={"buildings","places","points","railways","landuse","waterways","natural","roads"};
-                String pname = (String)JOptionPane.showInputDialog(jPanel, "选择你要查询的表：","查询数据",JOptionPane.PLAIN_MESSAGE,null,possibilities,possibilities[0]);
-                String sql="select * from "+pname;
+        Vector data = new Vector();
+        try {
+            if (conn != null) {
+                Object[] possibilities = {"buildings", "places", "points", "railways", "landuse", "waterways", "natural", "roads"};
+                String pname = (String) JOptionPane.showInputDialog(jPanel, "选择你要查询的表：", "查询数据", JOptionPane.PLAIN_MESSAGE, null, possibilities, possibilities[0]);
+                String sql = "select * from " + pname;
                 Statement statement = conn.createStatement();
-                ResultSet rst=statement.executeQuery(sql);
+                ResultSet rst = statement.executeQuery(sql);
                 rst = statement.executeQuery(sql);
-                if (Objects.equals(pname, "buildings")|Objects.equals(pname, "natural")|
-                        Objects.equals(pname, "railways")|Objects.equals(pname, "landuse")){
+                if (Objects.equals(pname, "buildings") | Objects.equals(pname, "natural") |
+                        Objects.equals(pname, "railways") | Objects.equals(pname, "landuse")) {
                     while (rst.next()) {
                         vector.clear();
                         vector.add(rst.getObject(1));
@@ -182,7 +196,7 @@ public class Frame extends JFrame {
                     jTable.clearSelection();
                 }
 
-                if (Objects.equals(pname, "roads")){
+                if (Objects.equals(pname, "roads")) {
                     jTable.invalidate();
                     while (rst.next()) {
                         vector.clear();
@@ -209,7 +223,7 @@ public class Frame extends JFrame {
 
                 }
 
-                if (Objects.equals(pname, "waterways")){
+                if (Objects.equals(pname, "waterways")) {
                     while (rst.next()) {
                         vector.clear();
                         vector.add(rst.getObject(1));
@@ -229,7 +243,7 @@ public class Frame extends JFrame {
                     jTable.clearSelection();
                 }
 
-                if (Objects.equals(pname, "places")){
+                if (Objects.equals(pname, "places")) {
                     while (rst.next()) {
                         vector.clear();
                         vector.add(rst.getObject(1));
@@ -249,7 +263,7 @@ public class Frame extends JFrame {
                     jTable.clearSelection();
                 }
 
-                if (Objects.equals(pname, "points")){
+                if (Objects.equals(pname, "points")) {
                     while (rst.next()) {
                         vector.clear();
                         vector.add(rst.getObject(1));
@@ -270,16 +284,15 @@ public class Frame extends JFrame {
                 }
 
 
-
                 return jTable;
             }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        return jTable;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return jTable;
+    }
 
-        public JTable funtion2()throws Exception {
+    public void funtion2()throws Exception {
             Vector<Object> vector = new Vector<Object>();
             Vector data=new Vector();
             try {
@@ -305,13 +318,14 @@ public class Frame extends JFrame {
                     names.add("类型");
                     names.add("距离");
                     jTable = new JTable(data, names);
-                    return jTable;
+                    return;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        return  jTable;}
-    public JTable funtion3()throws Exception{
+    }
+
+    public void funtion3()throws Exception{
         Vector<Object> vector = new Vector<Object>();
         Vector data=new Vector();
         try {
@@ -319,21 +333,20 @@ public class Frame extends JFrame {
                 String sql="call testpro(?,?)";
                 conn=Getconnect.getConnectiont();
                 CallableStatement stat=conn.prepareCall(sql);
-                JTextField aTextField=new JFormattedTextField();
-
-                stat.setInt(1, 538073703);
+                int id= Integer.parseInt(JOptionPane.showInputDialog(jPanel,"输入查询的编号"));
+                stat.setInt(1, id);
                 stat.registerOutParameter(2, OracleTypes.VARCHAR);
                 stat.execute();
                 String name=stat.getString(2);
-                JOptionPane.showMessageDialog(jPanel, name, "提示", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(jPanel, name, "查询结果", JOptionPane.PLAIN_MESSAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  jTable;
+        return;
     }
 
-    public JTable funtion4()throws Exception{
+    public void funtion4()throws Exception{
         Vector<Object> vector = new Vector<Object>();
         Vector data=new Vector();
         try {
@@ -351,6 +364,6 @@ public class Frame extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  jTable;
+        return;
     }
     }
