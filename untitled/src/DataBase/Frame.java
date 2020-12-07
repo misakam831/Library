@@ -65,6 +65,7 @@ public class Frame extends JFrame {
         JButton button_5 = new JButton("查询建筑物类型");
         JButton button_6 = new JButton("人均住房面积与人口总数");
         JButton button_7 = new JButton("火车站位置显示");
+        JButton button_8 = new JButton("显示呼包高速");
         add(button_1);
         add(button_2);
         add(button_3);
@@ -72,6 +73,7 @@ public class Frame extends JFrame {
         add(button_5);
         add(button_6);
         add(button_7);
+        add(button_8);
 
         /********************按钮***********************/
         button_1.setBounds(10,580,100,70);
@@ -194,6 +196,22 @@ public class Frame extends JFrame {
                 try {
                     if(conn!=null){
                         funtion6();
+                    }else {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+        button_8.setBounds(810,380,150,70);
+        button_8.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    if(conn!=null){
+                        funtion7();
                     }else {
                         JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
                     }
@@ -446,7 +464,7 @@ public class Frame extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        java.awt.Frame frame=new java.awt.Frame("包头市");
+        java.awt.Frame frame=new java.awt.Frame("包头市火车站缓冲区");
         frame.setSize(img.getWidth(),img.getHeight());
         frame.setLocation(500, 50);
         frame.setVisible(true);
@@ -485,6 +503,59 @@ public class Frame extends JFrame {
         }catch(SQLException e){
             e.printStackTrace();
         }
+    }
+
+    public void funtion7()throws Exception{
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File("E:\\gitcode\\untitled\\test.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        java.awt.Frame frame=new java.awt.Frame("京包铁路路线图");
+        frame.setSize(img.getWidth(),img.getHeight());
+        frame.setLocation(500, 50);
+        frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                frame.dispose();
+            }
+        });
+
+        String sql="select p.geometry from railways p where name='京包铁路'";
+        try{
+            Statement statement=conn.createStatement();
+            ResultSet resultSet =statement.executeQuery(sql);
+            while(resultSet.next()){
+                STRUCT st = (STRUCT) resultSet.getObject("geometry");
+                JGeometry geom=JGeometry.load(st);
+                int dimensionality=geom.getDimensions();
+                double[] geomxy=geom.getFirstPoint();
+                double[] geomxy1=geom.getLastPoint();
+                System.out.println(geomxy[0]);
+                System.out.println(geomxy[1]);
+                double pointx=(geomxy[0]-108.9932779)*808;
+                double pointy=(41.6261756-geomxy[1])*380;
+                double pointx1=(geomxy1[0]-108.9932779)*808;
+                double pointy1=(41.6261756-geomxy1[1])*380;
+                System.out.println(pointx);
+                System.out.println(pointy);
+
+                Graphics2D g2d=(Graphics2D)img.getGraphics();
+                g2d.setColor(Color.RED);
+                g2d.setFont(new Font("宋体",Font.PLAIN,20));
+                g2d.setStroke(new BasicStroke(5));
+                //g2d.fillOval((int)pointx,(int)pointy,30,30);
+                g2d.drawLine( (int)pointx,(int)pointy,(int)pointx1,(int)pointy1);
+                JLabel label = new JLabel(new ImageIcon(img));
+                frame.add(label);
+                label.setBounds(0, 0,img.getWidth(),img.getHeight());
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+
     }
 
 }
