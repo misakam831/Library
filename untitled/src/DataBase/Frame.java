@@ -64,7 +64,7 @@ public class Frame extends JFrame {
         JButton button_4 = new JButton("计算铁路造价");
         JButton button_5 = new JButton("查询建筑物类型");
         JButton button_6 = new JButton("人均住房面积与人口总数");
-        JButton button_7 = new JButton();
+        JButton button_7 = new JButton("火车站位置显示");
         add(button_1);
         add(button_2);
         add(button_3);
@@ -112,8 +112,6 @@ public class Frame extends JFrame {
                 }
             }
         });
-
-
         button_3.setBounds(250,580,200,70);
         button_3.addMouseListener(new MouseAdapter() {
             @Override
@@ -157,7 +155,11 @@ public class Frame extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    funtion4();
+                    if(conn!=null){
+                        funtion4();
+                    }else {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
+                    }
 
                 } catch (Exception exception) {
                     exception.printStackTrace();
@@ -165,15 +167,17 @@ public class Frame extends JFrame {
             }
         });
 
-        button_6.setBounds(810,580,100,70);
+        button_6.setBounds(810,580,150,70);
         button_6.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                try{
-                    funtion5();
-
-
+                try {
+                    if(conn!=null){
+                        funtion5();
+                    }else {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
+                    }
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -182,14 +186,17 @@ public class Frame extends JFrame {
             }
         });
 
-        button_7.setBounds(810,480,100,70);
+        button_7.setBounds(810,480,150,70);
         button_7.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                try{
-                    funtion6();
-
+                try {
+                    if(conn!=null){
+                        funtion6();
+                    }else {
+                        JOptionPane.showMessageDialog(jPanel, "数据库连接失败", "提示", JOptionPane.PLAIN_MESSAGE);
+                    }
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -435,27 +442,25 @@ public class Frame extends JFrame {
     public void funtion6()throws Exception{
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File("E:\\gitcode\\untitled\\1.png"));
+            img = ImageIO.read(new File("E:\\gitcode\\untitled\\test.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         java.awt.Frame frame=new java.awt.Frame("包头市");
-        frame.setLocationRelativeTo(null);
         frame.setSize(img.getWidth(),img.getHeight());
         frame.setLocation(500, 50);
         frame.setVisible(true);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                System.exit(0);
+                frame.dispose();
             }
         });
 
-        String sql="select p.geometry from points p where type='school'";
+        String sql="select p.geometry from points p where type='station'";
         try{
             Statement statement=conn.createStatement();
             ResultSet resultSet =statement.executeQuery(sql);
-
             while(resultSet.next()){
                 STRUCT st = (STRUCT) resultSet.getObject("geometry");
                 JGeometry geom=JGeometry.load(st);
@@ -463,8 +468,8 @@ public class Frame extends JFrame {
                 double[] geomxy=geom.getFirstPoint();
                 System.out.println(geomxy[0]);
                 System.out.println(geomxy[1]);
-                double pointx=(geomxy[0]-114.143)*2921;
-                double pointy=(30.649-geomxy[1])*3395;
+                double pointx=(geomxy[0]-108.9932779)*808;
+                double pointy=(41.6261756-geomxy[1])*380;
                 System.out.println(pointx);
                 System.out.println(pointy);
 
@@ -472,7 +477,7 @@ public class Frame extends JFrame {
                 g2d.setColor(Color.RED);
                 g2d.setFont(new Font("宋体",Font.PLAIN,30));
                 g2d.setStroke(new BasicStroke(12));
-                g2d.fillOval((int)pointx,(int)pointy,50,50);
+                g2d.fillOval((int)pointx,(int)pointy,10,10);
                 JLabel label = new JLabel(new ImageIcon(img));
                 frame.add(label);
                 label.setBounds(0, 0,img.getWidth(),img.getHeight());
@@ -481,6 +486,5 @@ public class Frame extends JFrame {
             e.printStackTrace();
         }
     }
-
 
 }
