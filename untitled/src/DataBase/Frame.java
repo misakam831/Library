@@ -3,13 +3,20 @@ package DataBase;
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleTypes;
 import oracle.spatial.geometry.JGeometry;
+import oracle.sql.STRUCT;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Objects;
 import java.util.Vector;
@@ -56,13 +63,15 @@ public class Frame extends JFrame {
         JButton button_3 = new JButton("查询两点间距离");
         JButton button_4 = new JButton("计算铁路造价");
         JButton button_5 = new JButton("查询建筑物类型");
-        JButton button_6 = new JButton("");
+        JButton button_6 = new JButton("人均住房面积与人口总数");
+        JButton button_7 = new JButton();
         add(button_1);
         add(button_2);
         add(button_3);
         add(button_4);
         add(button_5);
         add(button_6);
+        add(button_7);
 
         /********************按钮***********************/
         button_1.setBounds(10,580,100,70);
@@ -168,11 +177,28 @@ public class Frame extends JFrame {
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
+
+
             }
         });
 
-        this.setVisible(true);
+        button_7.setBounds(810,480,100,70);
+        button_7.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try{
+                    funtion6();
+
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+
     }
+
+
     public JTable funtion1() {
         Vector<Object> vector = new Vector<Object>();
         Vector data = new Vector();
@@ -382,16 +408,79 @@ public class Frame extends JFrame {
 
     public void funtion5()throws Exception{
         if (conn!=null){
-            String sql1="select p.populartion from table places p where p.name='包头'";
+            int a=0;
+            String sql1="select p.population from  places p where p.name='包头市' ";
+            Statement statement = conn.createStatement();
+            ResultSet rst = statement.executeQuery(sql1);
+            rst = statement.executeQuery(sql1);
+            while (rst.next()){
+                int populartion=rst.getInt("population");
+                System.out.println(populartion);
+                a=populartion;
+            }
+
+            JOptionPane.showMessageDialog(jPanel, a, "人口查询", JOptionPane.PLAIN_MESSAGE);
             String sql="call prearea(?)";
             conn=Getconnect.getConnectiont();
             CallableStatement stat=conn.prepareCall(sql);
             stat.registerOutParameter(1, OracleTypes.NUMBER);
             stat.execute();
             double number=stat.getDouble(1);
-            System.out.println(number);
+            JOptionPane.showMessageDialog(jPanel, number/a,"人均住房面积", JOptionPane.PLAIN_MESSAGE);
 
         }
 
     }
+
+    public void funtion6()throws Exception{
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File("E:\\gitcode\\untitled\\1.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        java.awt.Frame frame=new java.awt.Frame("包头市");
+        frame.setLocationRelativeTo(null);
+        frame.setSize(img.getWidth(),img.getHeight());
+        frame.setLocation(500, 50);
+        frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+
+        String sql="select p.geometry from points p where type='school'";
+        try{
+            Statement statement=conn.createStatement();
+            ResultSet resultSet =statement.executeQuery(sql);
+
+            while(resultSet.next()){
+                STRUCT st = (STRUCT) resultSet.getObject("geometry");
+                JGeometry geom=JGeometry.load(st);
+                int dimensionality=geom.getDimensions();
+                double[] geomxy=geom.getFirstPoint();
+                System.out.println(geomxy[0]);
+                System.out.println(geomxy[1]);
+                double pointx=(geomxy[0]-114.143)*2921;
+                double pointy=(30.649-geomxy[1])*3395;
+                System.out.println(pointx);
+                System.out.println(pointy);
+
+                Graphics2D g2d=(Graphics2D)img.getGraphics();
+                g2d.setColor(Color.RED);
+                g2d.setFont(new Font("宋体",Font.PLAIN,30));
+                g2d.setStroke(new BasicStroke(12));
+                g2d.fillOval((int)pointx,(int)pointy,50,50);
+                JLabel label = new JLabel(new ImageIcon(img));
+                frame.add(label);
+                label.setBounds(0, 0,img.getWidth(),img.getHeight());
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
     }
+
+
+}
