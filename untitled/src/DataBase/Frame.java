@@ -10,10 +10,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -351,30 +348,45 @@ public class Frame extends JFrame {
     }
 
     public void funtion2()throws Exception {
-            Vector<Object> vector = new Vector<Object>();
-            Vector data=new Vector();
-            try {
-                if (conn != null) {
-                    String sql ="call dist1(?,?,?)";
-                    CallableStatement stat=conn.prepareCall(sql);
-                    String pname1 = (String) JOptionPane.showInputDialog(jPanel, "输入地名", "查询距离",JOptionPane.PLAIN_MESSAGE);
-                    stat.setString(1,pname1);
-                    String pname2 = (String) JOptionPane.showInputDialog(jPanel, "输入地名", "查询距离",JOptionPane.PLAIN_MESSAGE);
-                    stat.setString(2,pname2);
-                    stat.registerOutParameter(3, OracleTypes.NUMBER);
-                    stat.execute();
-                    int length=stat.getInt(3);
-                    JOptionPane.showMessageDialog(jPanel, length, "距离长为 单位（m）", JOptionPane.PLAIN_MESSAGE);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        frame2 f = new frame2(conn);
+ /*           Vector<Object> vector = new Vector<Object>();
+            Vector data=new Vector();*/
+        /*java.awt.Frame frame = new java.awt.Frame("京包铁路路线图");
+
+            JPanel jPanel1 = new JPanel();
+            JPanel jPanel2 = new JPanel();
+            JPanel jPanel3 = new JPanel();
+            JLabel jlabel1 = new JLabel("请起点输入地名");
+            JLabel jLabel2 = new JLabel("请输入终点地名");
+            JButton jButton = new JButton();
+            jButton.setText("计算");
+
+
+            JTextField jTextField1 = new JTextField(10);
+            JTextField jTextField2 = new JTextField(10);
+
+            jPanel1.add(jlabel1);
+            jPanel1.add(jTextField1);
+            jPanel2.add(jLabel2);
+            jPanel2.add(jTextField2);
+            jPanel3.add(jButton);
+            jButton.addActionListener((ActionListener) frame);
+
+            frame.add(jPanel1);
+            frame.add(jPanel2);
+            frame.add(jPanel3);
+
+
+            frame.setLayout(new GridLayout(3, 1));
+            frame.setLocation(800, 500);
+            frame.setSize(800, 500);
+            frame.setVisible(true);*/
     }
 
     public void funtion3()throws Exception{
         try {
             if (conn!=null){
-                String pname = (String) JOptionPane.showInputDialog(jPanel, "输入查询的道路", "查询道路", JOptionPane.PLAIN_MESSAGE);
+                String pname = JOptionPane.showInputDialog(jPanel, "输入查询的道路", "查询道路", JOptionPane.PLAIN_MESSAGE);
                 String sql="call roads_length(?,?,?)";
                 conn=Getconnect.getConnectiont();
                 CallableStatement stat=conn.prepareCall(sql);
@@ -416,7 +428,7 @@ public class Frame extends JFrame {
         try {
             if (conn!=null){
                 String sql="call testpro1(?,?)";
-                String pname = (String) JOptionPane.showInputDialog(jPanel, "输入查询建筑物的名称", "查询类型", JOptionPane.PLAIN_MESSAGE);
+                String pname = JOptionPane.showInputDialog(jPanel, "输入查询建筑物的名称", "查询类型", JOptionPane.PLAIN_MESSAGE);
                 conn=Getconnect.getConnectiont();
                 CallableStatement stat=conn.prepareCall(sql);
                 stat.setString(1,pname);
